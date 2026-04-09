@@ -103,7 +103,24 @@ void hatch_gear_controller(void)
     switch (g_hatch_gear_timer){
         case HATCH_GEAR_TIMER_IDLE:
             break;
-        case HATCH_GEAR_TIMER_
+        case HATCH_GEAR_TIMER_SHORTEN:
+            r_gear_state = R_GEAR_SHORTEN;
+            l_gear_state = L_GEAR_SHORTEN;
+            break;
+        case HATCH_GEAR_TIMER_STORAGE:
+            r_gear_state = R_GEAR_STORAGE;
+            l_gear_state = L_GEAR_STORAGE;
+            break;
+        case HATCH_GEAR_TIMER_L_HATCH:
+            l_hatch_state = L_HATCH_CLOSE;
+            break;
+        case HATCH_GEAR_TIMER_R_HATCH:
+            r_hatch_state = R_HATCH_CLOSE;
+            break;
+        case HATCH_GEAR_TIMER_FINISH:
+            break;
+        default:
+            break;
     }
 
 }
