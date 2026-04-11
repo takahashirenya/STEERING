@@ -3,6 +3,7 @@
 #include "servo.h"
 #include "hardware/adc.h"
 #include "pico/stdlib.h"
+#include "pico/time.h"
 
 #include "servo_adc.h"
 #include "servo_pwm.h"
@@ -24,20 +25,22 @@ void button_state_init(void)
 
 void button_state_update(bool button_now, uint32_t now_ms)
 {
-    // 押されたら待機状態に遷移
+    // IDLE中に立ち上がりエッジを検出したら開始
     if (button_now && !g_prev_button && g_button_state == BUTTON_STATE_IDLE) {
         g_press_time = now_ms;
         g_button_state = BUTTON_STATE_WAIT;
-        g_timer_active = true;  
+        g_timer_active = true;
     }
 
+    // 待機時間経過でDONEイベントを1回だけ出す
     if (g_timer_active) {
-        if (now_ms - g_press_time >= BUTTON_WAIT_TIME_MS) {
+        if ((now_ms - g_press_time) >= BUTTON_WAIT_TIME_MS) {
             g_button_state = BUTTON_STATE_DONE;
-            g_done_event = true;
-            g_timer_active = false;  // 1回で終了
+            g_done_event = true;      // 1回だけ立つイベント
+            g_timer_active = false;
         }
     }
+
     g_prev_button = button_now;
 }
 
@@ -49,48 +52,69 @@ button_state_t button_state_get(void)
 static hatch_gear_t g_hatch_gear_timer = HATCH_GEAR_TIMER_IDLE;
 static uint32_t hatch_gear_start_time = 0;
 
+void hatch_gear_timer_init(void)
+{
+    g_hatch_gear_timer = HATCH_GEAR_TIMER_IDLE;
+    hatch_gear_start_time = 0;
+}
+
 void hatch_gear_timer_update(void)
 {
-    if (g_button_state == BUTTON_STATE_DONE) {
-        hatch_gear_start_time = now_ms();
-        switch (g_hatch_gear_timer) {
-            case HATCH_GEAR_TIMER_IDLE:
-                hatch_gear_start_time = now_ms();
-                g_hatch_gear_timer = HATCH_GEAR_TIMER_SHORTEN;
-                break;
-            case HATCH_GEAR_TIMER_SHORTEN:
-                if (now_ms() - hatch_gear_start_time >= HATCH_GEAR_TIMER_INTERVAL) {
-                    g_hatch_gear_timer = HATCH_GEAR_TIMER_STORAGE;
-                    hatch_gear_start_time = now_ms();
-                }
-                break;
-            case HATCH_GEAR_TIMER_STORAGE:
-                    if (now_ms() - hatch_gear_start_time >= HATCH_GEAR_TIMER_INTERVAL) {
-                        g_hatch_gear_timer = HATCH_GEAR_TIMER_L_HATCH;
-                        hatch_gear_start_time = now_ms();
-                    }
-                break;
-            case HATCH_GEAR_TIMER_L_HATCH:
-                    if (now_ms() - hatch_gear_start_time >= HATCH_GEAR_TIMER_INTERVAL) {
-                        g_hatch_gear_timer = HATCH_GEAR_TIMER_R_HATCH;
-                        hatch_gear_start_time = now_ms();
-                    }
-                break;
-            case HATCH_GEAR_TIMER_R_HATCH:
-                if (now_ms() - hatch_gear_start_time >= HATCH_GEAR_TIMER_INTERVAL) {
-                        g_hatch_gear_timer = HATCH_GEAR_TIMER_FINISH;
-                        hatch_gear_start_time = now_ms();
-                    }
-                break;
-            case HATCH_GEAR_TIMER_FINISH:
-                break;
-            default:
-                break;
+    uint32_t now = now_ms();
+
+    // DONEイベントを1回だけ消費してシーケンス開始
+    if (g_done_event) {
+        g_done_event = false;
+
+        if (g_hatch_gear_timer == HATCH_GEAR_TIMER_IDLE) {
+            g_hatch_gear_timer = HATCH_GEAR_TIMER_SHORTEN;
+            hatch_gear_start_time = now;   // ← ここが重要
         }
-        g_hatch_gear_timer = HATCH_GEAR_TIMER_SHORTEN;
-        hatch_gear_start_time = now_ms();
     }
-    
+
+    switch (g_hatch_gear_timer) {
+        case HATCH_GEAR_TIMER_IDLE:
+            break;
+
+        case HATCH_GEAR_TIMER_SHORTEN:
+            if ((now - hatch_gear_start_time) >= HATCH_GEAR_TIMER_INTERVAL) {
+                g_hatch_gear_timer = HATCH_GEAR_TIMER_STORAGE;
+                hatch_gear_start_time = now;
+            }
+            break;
+
+        case HATCH_GEAR_TIMER_STORAGE:
+            if ((now - hatch_gear_start_time) >= HATCH_GEAR_TIMER_INTERVAL) {
+                g_hatch_gear_timer = HATCH_GEAR_TIMER_L_HATCH;
+                hatch_gear_start_time = now;
+            }
+            break;
+
+        case HATCH_GEAR_TIMER_L_HATCH:
+            if ((now - hatch_gear_start_time) >= HATCH_GEAR_TIMER_INTERVAL) {
+                g_hatch_gear_timer = HATCH_GEAR_TIMER_R_HATCH;
+                hatch_gear_start_time = now;
+            }
+            break;
+
+        case HATCH_GEAR_TIMER_R_HATCH:
+            if ((now - hatch_gear_start_time) >= HATCH_GEAR_TIMER_INTERVAL) {
+                g_hatch_gear_timer = HATCH_GEAR_TIMER_FINISH;
+                hatch_gear_start_time = now;
+            }
+            break;
+
+        case HATCH_GEAR_TIMER_FINISH:
+            break;
+
+        default:
+            break;
+    }
+}
+
+uint32_t now_ms(void)
+{
+    return to_ms_since_boot(get_absolute_time());
 }
 
 static uint16_t r_hatch_state = R_HATCH_OPEN;
@@ -100,29 +124,39 @@ static uint16_t l_gear_state = L_GEAR_IDLE;
 
 void hatch_gear_controller(void)
 {
-    switch (g_hatch_gear_timer){
+    switch (g_hatch_gear_timer) {
         case HATCH_GEAR_TIMER_IDLE:
             break;
+
         case HATCH_GEAR_TIMER_SHORTEN:
             r_gear_state = R_GEAR_SHORTEN;
             l_gear_state = L_GEAR_SHORTEN;
             break;
+
         case HATCH_GEAR_TIMER_STORAGE:
             r_gear_state = R_GEAR_STORAGE;
             l_gear_state = L_GEAR_STORAGE;
             break;
+
         case HATCH_GEAR_TIMER_L_HATCH:
             l_hatch_state = L_HATCH_CLOSE;
             break;
+
         case HATCH_GEAR_TIMER_R_HATCH:
             r_hatch_state = R_HATCH_CLOSE;
             break;
+
         case HATCH_GEAR_TIMER_FINISH:
             break;
+
         default:
             break;
     }
 
+    servo_pwm_write_us(R_HATCH_PWM, r_hatch_state);
+    servo_pwm_write_us(L_HATCH_PWM, l_hatch_state);
+    servo_pwm_write_us(R_GEAR_PWM, r_gear_state);
+    servo_pwm_write_us(L_GEAR_PWM, l_gear_state);
 }
 
 

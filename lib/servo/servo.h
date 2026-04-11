@@ -5,11 +5,11 @@
 
 // servo property
 
-#define LAD_ADC 44
-#define ELE_ADC 45
+#define LAD_ADC 46
+#define ELE_ADC 47
 
-#define LAD_ADC_CHANNEL 4
-#define ELE_ADC_CHANNEL 5
+#define LAD_ADC_CHANNEL 6
+#define ELE_ADC_CHANNEL 7
 
 #define LAD_DEADZONE 200 //ニュートラルの±200の範囲は無視する。
 #define ELE_DEADZONE 200 //ニュートラルの±200の範囲は無視する。
@@ -58,6 +58,8 @@
 #define BUTTON_WAIT_TIME_MS 7000U // ボタンが押されてから7秒後にイベント発生
 #define HATCH_GEAR_TIMER_INTERVAL 200U  // 200msごとに次の動作に移る
 
+#define HATCH_GEAR_BUTTON_GPIO 39
+
 
 typedef enum {
     BUTTON_STATE_IDLE = 0,     // 待機中
@@ -97,6 +99,7 @@ extern "C" // for C++ compilers
     void button_state_update(bool button_now, uint32_t now_ms);
     button_state_t button_state_get(void);
     bool button_state_take_done(void);
+    uint32_t now_ms(void);
 
 #ifdef __cplusplus
 }
