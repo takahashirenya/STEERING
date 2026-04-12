@@ -22,8 +22,8 @@
 #define LAD_ADC_NUTRAL 2018
 #define LAD_ADC_MIN 10
 
-#define LAD_PWM 4
-#define ELE_PWM 14
+#define LAD_PWM 32
+#define ELE_PWM 24
 
 #define ELE_REVERSAL_FLAG false
 #define ELE_MAX 2000
@@ -35,17 +35,17 @@
 #define LAD_NUTRAL 1500
 #define LAD_MIN 1000
 
-#define R_HATCH_PWM 16
-#define L_HATCH_PWM 17
+#define R_HATCH_PWM 34
+#define L_HATCH_PWM 3
 
-#define R_GEAR_PWM 18
-#define L_GEAR_PWM 19
+#define R_GEAR_PWM 36
+#define L_GEAR_PWM 4
 
 #define R_HATCH_OPEN 1000
 #define R_HATCH_CLOSE 2000
 
-#define L_HATCH_OPEN 2000
-#define L_HATCH_CLOSE 1000
+#define L_HATCH_OPEN 1000
+#define L_HATCH_CLOSE 2000
 
 #define R_GEAR_IDLE 1500
 #define R_GEAR_SHORTEN 1000
@@ -56,7 +56,7 @@
 #define L_GEAR_STORAGE 1000
 
 #define BUTTON_WAIT_TIME_MS 7000U // ボタンが押されてから7秒後にイベント発生
-#define HATCH_GEAR_TIMER_INTERVAL 200U  // 200msごとに次の動作に移る
+#define HATCH_GEAR_TIMER_INTERVAL 500U  // 500msごとに次の動作に移る
 
 #define HATCH_GEAR_BUTTON_GPIO 39
 
@@ -87,10 +87,15 @@ extern "C" // for C++ compilers
 
     // main setup functions
     void tail_setup(void);
+    void hatch_gear_pwm_init(void);
+    void hatch_gear_timer_init(void);
     void button_state_init(void);
+    void button_init(void);
 
     // main control functions 
     void tail_controller(void);
+    void hatch_gear_timer_update(void);
+    void hatch_gear_controller(void);
 
 
     // utility functions

@@ -23,6 +23,13 @@ void button_state_init(void)
     g_timer_active = false;
 }
 
+void button_init(void)
+{
+    gpio_init(HATCH_GEAR_BUTTON_GPIO);
+    gpio_set_dir(HATCH_GEAR_BUTTON_GPIO, GPIO_IN);
+    gpio_pull_up(HATCH_GEAR_BUTTON_GPIO); // プルアップ抵抗を有効にする
+}
+
 void button_state_update(bool button_now, uint32_t now_ms)
 {
     // IDLE中に立ち上がりエッジを検出したら開始
@@ -56,6 +63,14 @@ void hatch_gear_timer_init(void)
 {
     g_hatch_gear_timer = HATCH_GEAR_TIMER_IDLE;
     hatch_gear_start_time = 0;
+}
+
+void hatch_gear_pwm_init(void)
+{
+    servo_pwm_init_us(R_HATCH_PWM, R_HATCH_OPEN);
+    servo_pwm_init_us(L_HATCH_PWM, L_HATCH_OPEN);
+    servo_pwm_init_us(R_GEAR_PWM, R_GEAR_IDLE);
+    servo_pwm_init_us(L_GEAR_PWM, L_GEAR_IDLE);
 }
 
 void hatch_gear_timer_update(void)
@@ -163,7 +178,7 @@ void hatch_gear_controller(void)
 
 void servo_pwm_test(void)
 {   
-    static int test_pin = 4; // テスト用GPIOピン
+    static int test_pin = 8; // テスト用GPIOピン
     servo_pwm_init_us(test_pin, 1500);
     while (true) {
         servo_pwm_write_us(test_pin, 1000);
@@ -193,19 +208,21 @@ void adc_reader(void)
 void tail_setup(void)
 {
     servo_adc_init(LAD_ADC);
+    servo_adc_init(ELE_ADC);
     // PWMの初期化
     servo_pwm_init_us(LAD_PWM, LAD_NUTRAL); // 50Hzで初期化、初期dutyはニュートラル
+    servo_pwm_init_us(ELE_PWM, ELE_NUTRAL);
 }
 
 void tail_controller(void)
 {
     uint16_t lad_adc_value = servo_adc_read_avg(LAD_ADC_CHANNEL);
-
     uint16_t lad_pwm_value = adc_to_pwm(lad_adc_value, LAD_ADC_NUTRAL, LAD_ADC_MIN, LAD_ADC_MAX, LAD_DEADZONE, LAD_NUTRAL, LAD_MIN, LAD_MAX, LAD_REVERSAL_FLAG);
-    printf("ADC Value: %u\n", lad_adc_value);
-    printf("PWM Value: %u\n", lad_pwm_value);
-
     servo_pwm_write_us(LAD_PWM, lad_pwm_value);
+
+    uint16_t ele_adc_value = servo_adc_read_avg(ELE_ADC_CHANNEL);
+    uint16_t ele_pwm_value = adc_to_pwm(ele_adc_value, ELE_ADC_NUTRAL, ELE_ADC_MIN, ELE_ADC_MAX, ELE_DEADZONE, ELE_NUTRAL, ELE_MIN, ELE_MAX, ELE_REVERSAL_FLAG);
+    servo_pwm_write_us(ELE_PWM, ele_pwm_value);
 }
 
 
