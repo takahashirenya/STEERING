@@ -10,6 +10,10 @@
 #define SLOW_STEP 1
 #define FAST_STEP 10
 
+// servoのusの範囲は
+//HPS703は、1000-2500くらい
+//DS系は、500-2500くらい
+
 // servo property
 
 

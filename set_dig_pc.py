@@ -1,7 +1,7 @@
 import tkinter as tk
 from serial import Serial
 
-ser = Serial("COM12", 115200, timeout=1)
+ser = Serial("COM4", 115200, timeout=1)
 ser.reset_input_buffer()
 
 root = tk.Tk()
