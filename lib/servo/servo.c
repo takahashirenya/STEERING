@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 #include "servo.h"
 #include "hardware/adc.h"
@@ -7,6 +9,54 @@
 
 #include "servo_adc.h"
 #include "servo_pwm.h"
+
+static float servo_dig = SET_DIG_NUTRAL;
+
+void set_servo_dig_init(void)
+{
+    servo_pwm_init_us(SET_DIG_PWM, SET_DIG_NUTRAL);
+}
+
+void set_servo_dig_controller(void)
+{
+    char line[64];
+
+    if (fgets(line, sizeof(line), stdin) == NULL) {
+            sleep_ms(10);
+            return;
+        }
+    
+    // 改行除去
+    line[strcspn(line, "\r\n")] = '\0';
+
+    if (strcmp(line, "LEFT_SLOW") == 0) {
+            servo_dig -= SLOW_STEP;
+        }
+        else if (strcmp(line, "RIGHT_SLOW") == 0) {
+            servo_dig += SLOW_STEP;
+        }
+        else if (strcmp(line, "LEFT_FAST") == 0) {
+            servo_dig -= FAST_STEP;
+        }
+        else if (strcmp(line, "RIGHT_FAST") == 0) {
+            servo_dig += FAST_STEP;
+        }
+        else if (strcmp(line, "NEUTRAL") == 0) {
+            servo_dig = SET_DIG_NUTRAL;
+        }
+        else if (strcmp(line, "GET") == 0) {
+            float duty = pio_ele_get_duty();
+            printf("D:%.5f\n", servo_dig);
+            return;
+        }
+        else {
+            // 未知コマンドは無視
+            return;
+        }
+    servo_pwm_write_us(SET_DIG_PWM, dig_to_us(servo_dig));
+    printf("D:%.5f\n", servo_dig);
+    
+}  
 
 static button_state_t g_button_state = BUTTON_STATE_IDLE;
 static bool g_prev_button = false;

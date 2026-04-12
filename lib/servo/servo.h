@@ -3,13 +3,25 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+//set dig property
+
+#define SET_DIG_PWM 32
+#define SET_DIG_NUTRAL 1500
+#define SLOW_STEP 1
+#define FAST_STEP 10
+
 // servo property
 
+
+// tail property
 #define LAD_ADC 46
 #define ELE_ADC 47
 
 #define LAD_ADC_CHANNEL 6
 #define ELE_ADC_CHANNEL 7
+
+#define LAD_PWM 32
+#define ELE_PWM 24
 
 #define LAD_DEADZONE 200 //ニュートラルの±200の範囲は無視する。
 #define ELE_DEADZONE 200 //ニュートラルの±200の範囲は無視する。
@@ -22,9 +34,6 @@
 #define LAD_ADC_NUTRAL 2018
 #define LAD_ADC_MIN 10
 
-#define LAD_PWM 32
-#define ELE_PWM 24
-
 #define ELE_REVERSAL_FLAG false
 #define ELE_MAX 2000
 #define ELE_NUTRAL 1500
@@ -34,6 +43,9 @@
 #define LAD_MAX 2000
 #define LAD_NUTRAL 1500
 #define LAD_MIN 1000
+
+
+// hatch and gear property
 
 #define R_HATCH_PWM 34
 #define L_HATCH_PWM 3
@@ -84,6 +96,7 @@ extern "C" // for C++ compilers
     // test functions
     void servo_pwm_test(void);
     void adc_reader(void);
+    void set_servo_dig_controller(void);
 
     // main setup functions
     void tail_setup(void);
@@ -91,6 +104,7 @@ extern "C" // for C++ compilers
     void hatch_gear_timer_init(void);
     void button_state_init(void);
     void button_init(void);
+    void set_servo_dig_init(void);
 
     // main control functions 
     void tail_controller(void);
