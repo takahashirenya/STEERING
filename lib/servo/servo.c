@@ -45,7 +45,6 @@ void set_servo_dig_controller(void)
             servo_dig = SET_DIG_NUTRAL;
         }
         else if (strcmp(line, "GET") == 0) {
-            float duty = pio_ele_get_duty();
             printf("D:%.5f\n", servo_dig);
             return;
         }
@@ -53,7 +52,7 @@ void set_servo_dig_controller(void)
             // 未知コマンドは無視
             return;
         }
-    servo_pwm_write_us(SET_DIG_PWM, dig_to_us(servo_dig));
+    servo_pwm_write_us(SET_DIG_PWM, servo_dig);
     printf("D:%.5f\n", servo_dig);
     
 }  
