@@ -57,7 +57,24 @@
 
 
 
-// 　角度出し用コード
+// // 　角度出し用コード
+
+// int main(void)
+// {
+//     stdio_init_all();
+//     sleep_ms(2000); // USBシリアル安定待ち
+
+//     printf("System start\n");
+
+//     set_servo_dig_init();
+
+//         while (true) {
+//             set_servo_dig_controller();
+//             sleep_ms(10);
+//         }
+
+//     return 0;
+// }
 
 int main(void)
 {
@@ -66,12 +83,7 @@ int main(void)
 
     printf("System start\n");
 
-    set_servo_dig_init();
-
-        while (true) {
-            set_servo_dig_controller();
-            sleep_ms(10);
-        }
+    adc_reader();
 
     return 0;
 }

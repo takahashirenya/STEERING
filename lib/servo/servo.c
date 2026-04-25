@@ -247,10 +247,23 @@ void servo_pwm_test(void)
 void adc_reader(void)
 {
     servo_adc_init(LAD_ADC);
+    servo_adc_init(ELE_ADC);
+
+    // ボタン初期化
+    gpio_init(HATCH_GEAR_BUTTON_GPIO);
+    gpio_set_dir(HATCH_GEAR_BUTTON_GPIO, GPIO_IN);
+    gpio_pull_up(HATCH_GEAR_BUTTON_GPIO);  // 内部プルアップ有効
+
     while (true) {
         uint16_t adc_value = servo_adc_read_avg(LAD_ADC_CHANNEL);
-        printf("ADC Value: %u\n", adc_value);
-        sleep_ms(500);
+        uint16_t adc_value_ele = servo_adc_read_avg(ELE_ADC_CHANNEL);
+
+        bool button_pressed = (gpio_get(HATCH_GEAR_BUTTON_GPIO) == 0);  // 押されたら0
+
+        printf("ADC Value: %u, %u, Button: %d\n",
+               adc_value, adc_value_ele, button_pressed);
+
+        sleep_ms(100);
     }
 }
 
