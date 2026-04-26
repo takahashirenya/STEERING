@@ -18,14 +18,13 @@
 
 
 // tail property
-#define LAD_ADC 46
-#define ELE_ADC 47
+#define LAD_ADC 47
+#define ELE_ADC 46
 
-#define LAD_ADC_CHANNEL 6
-#define ELE_ADC_CHANNEL 7
-
-#define LAD_PWM 32
-#define ELE_PWM 24
+#define LAD_ADC_CHANNEL 7
+#define ELE_ADC_CHANNEL 6
+#define LAD_PWM 22
+#define ELE_PWM 28
 
 #define LAD_DEADZONE 100 //ニュートラルの±200の範囲は無視する。
 #define ELE_DEADZONE 300 //ニュートラルの±200の範囲は無視する。
