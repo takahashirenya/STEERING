@@ -38,14 +38,14 @@
 #define LAD_ADC_MIN 10
 
 #define ELE_REVERSAL_FLAG false
-#define ELE_MAX 2129
-#define ELE_NUTRAL 1655
-#define ELE_MIN 1135
+#define ELE_MAX 2276
+#define ELE_NUTRAL 1793
+#define ELE_MIN 1274
 
 #define LAD_REVERSAL_FLAG false
-#define LAD_MAX 1834
-#define LAD_NUTRAL 1481
-#define LAD_MIN 1148
+#define LAD_MAX 1860
+#define LAD_NUTRAL 1504
+#define LAD_MIN 1168
 
 
 // hatch and gear property

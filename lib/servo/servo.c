@@ -298,7 +298,9 @@ uint16_t adc_to_pwm(
     uint16_t pwm_min,
     uint16_t pwm_max,
     bool reversal_flag)
-{
+{   
+    if (adc_value < adc_min) adc_value = adc_min;
+    if (adc_value > adc_max) adc_value = adc_max;
     // --- オフセット計算 ---
     int32_t adc_offset = (int32_t)adc_value - (int32_t)adc_neutral;
 
