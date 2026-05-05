@@ -37,23 +37,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
  16 .comment      00000045  00000000  00000000  00007d54  2**0
                   CONTENTS, READONLY
- 17 .debug_info   00036567  00000000  00000000  00007d99  2**0
+ 17 .debug_info   0003655b  00000000  00000000  00007d99  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 18 .debug_abbrev 000097d0  00000000  00000000  0003e300  2**0
+ 18 .debug_abbrev 000097d0  00000000  00000000  0003e2f4  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 19 .debug_loclists 00019c89  00000000  00000000  00047ad0  2**0
+ 19 .debug_loclists 00019c85  00000000  00000000  00047ac4  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 20 .debug_aranges 000012a8  00000000  00000000  00061760  2**3
+ 20 .debug_aranges 000012a8  00000000  00000000  00061750  2**3
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 21 .debug_rnglists 00004778  00000000  00000000  00062a08  2**0
+ 21 .debug_rnglists 00004778  00000000  00000000  000629f8  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 22 .debug_line   000221e8  00000000  00000000  00067180  2**0
+ 22 .debug_line   000221e8  00000000  00000000  00067170  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 23 .debug_str    00009c9e  00000000  00000000  00089368  2**0
+ 23 .debug_str    00009c9e  00000000  00000000  00089358  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 24 .debug_frame  0000338c  00000000  00000000  00093008  2**2
+ 24 .debug_frame  0000338c  00000000  00000000  00092ff8  2**2
                   CONTENTS, READONLY, DEBUGGING, OCTETS
- 25 .debug_line_str 00000233  00000000  00000000  00096394  2**0
+ 25 .debug_line_str 00000233  00000000  00000000  00096384  2**0
                   CONTENTS, READONLY, DEBUGGING, OCTETS
 
 C:/Users/renya/pico_sdk_code/STEERING/build/STEERING.elf:     file format elf32-littlearm
@@ -295,9 +295,9 @@ Disassembly of section .text:
 10000256:	f003 ffb5 	bl	100041c4 <hatch_gear_pwm_init>
 1000025a:	f004 f81d 	bl	10004298 <now_ms>
 1000025e:	4601      	mov	r1, r0
-10000260:	68a0      	ldr	r0, [r4, #8]
-10000262:	f080 0080 	eor.w	r0, r0, #128	@ 0x80
-10000266:	f3c0 10c0 	ubfx	r0, r0, #7, #1
+10000260:	6860      	ldr	r0, [r4, #4]
+10000262:	f080 7000 	eor.w	r0, r0, #33554432	@ 0x2000000
+10000266:	f3c0 6040 	ubfx	r0, r0, #25, #1
 1000026a:	f003 ff65 	bl	10004138 <button_state_update>
 1000026e:	f003 ffc1 	bl	100041f4 <hatch_gear_timer_update>
 10000272:	f004 f823 	bl	100042bc <hatch_gear_controller>
@@ -6677,9 +6677,9 @@ Disassembly of section .text:
 
 10004118 <button_init>:
 10004118:	b508      	push	{r3, lr}
-1000411a:	2027      	movs	r0, #39	@ 0x27
+1000411a:	2019      	movs	r0, #25
 1000411c:	f7fc f8f4 	bl	10000308 <gpio_init>
-10004120:	2027      	movs	r0, #39	@ 0x27
+10004120:	2019      	movs	r0, #25
 10004122:	f04f 0300 	mov.w	r3, #0
 10004126:	ec43 0044 	gpioc_bit_oe_put r0, r3
 1000412a:	e8bd 4008 	ldmia.w	sp!, {r3, lr}
@@ -6749,18 +6749,18 @@ Disassembly of section .text:
 
 100041c4 <hatch_gear_pwm_init>:
 100041c4:	b508      	push	{r3, lr}
-100041c6:	f44f 717a 	mov.w	r1, #1000	@ 0x3e8
-100041ca:	2022      	movs	r0, #34	@ 0x22
+100041c6:	f240 51dc 	movw	r1, #1500	@ 0x5dc
+100041ca:	2017      	movs	r0, #23
 100041cc:	f000 f98c 	bl	100044e8 <servo_pwm_init_us>
-100041d0:	f44f 717a 	mov.w	r1, #1000	@ 0x3e8
-100041d4:	2003      	movs	r0, #3
+100041d0:	f640 1142 	movw	r1, #2370	@ 0x942
+100041d4:	2001      	movs	r0, #1
 100041d6:	f000 f987 	bl	100044e8 <servo_pwm_init_us>
-100041da:	f240 51dc 	movw	r1, #1500	@ 0x5dc
-100041de:	2024      	movs	r0, #36	@ 0x24
+100041da:	f640 1124 	movw	r1, #2340	@ 0x924
+100041de:	2018      	movs	r0, #24
 100041e0:	f000 f982 	bl	100044e8 <servo_pwm_init_us>
 100041e4:	e8bd 4008 	ldmia.w	sp!, {r3, lr}
-100041e8:	f240 51dc 	movw	r1, #1500	@ 0x5dc
-100041ec:	2004      	movs	r0, #4
+100041e8:	f44f 619b 	mov.w	r1, #1240	@ 0x4d8
+100041ec:	2002      	movs	r0, #2
 100041ee:	f000 b97b 	b.w	100044e8 <servo_pwm_init_us>
 100041f2:	bf00      	nop
 
@@ -6797,7 +6797,7 @@ Disassembly of section .text:
 10004238:	4915      	ldr	r1, [pc, #84]	@ (10004290 <hatch_gear_timer_update+0x9c>)
 1000423a:	680b      	ldr	r3, [r1, #0]
 1000423c:	1ac3      	subs	r3, r0, r3
-1000423e:	f5b3 7ffa 	cmp.w	r3, #500	@ 0x1f4
+1000423e:	f5b3 7f2f 	cmp.w	r3, #700	@ 0x2bc
 10004242:	d3ec      	bcc.n	1000421e <hatch_gear_timer_update+0x2a>
 10004244:	2305      	movs	r3, #5
 10004246:	7013      	strb	r3, [r2, #0]
@@ -6806,7 +6806,7 @@ Disassembly of section .text:
 1000424c:	4910      	ldr	r1, [pc, #64]	@ (10004290 <hatch_gear_timer_update+0x9c>)
 1000424e:	680b      	ldr	r3, [r1, #0]
 10004250:	1ac3      	subs	r3, r0, r3
-10004252:	f5b3 7ffa 	cmp.w	r3, #500	@ 0x1f4
+10004252:	f5b3 7f2f 	cmp.w	r3, #700	@ 0x2bc
 10004256:	d3e2      	bcc.n	1000421e <hatch_gear_timer_update+0x2a>
 10004258:	2304      	movs	r3, #4
 1000425a:	7013      	strb	r3, [r2, #0]
@@ -6815,7 +6815,7 @@ Disassembly of section .text:
 10004260:	490b      	ldr	r1, [pc, #44]	@ (10004290 <hatch_gear_timer_update+0x9c>)
 10004262:	680b      	ldr	r3, [r1, #0]
 10004264:	1ac3      	subs	r3, r0, r3
-10004266:	f5b3 7ffa 	cmp.w	r3, #500	@ 0x1f4
+10004266:	f5b3 7f2f 	cmp.w	r3, #700	@ 0x2bc
 1000426a:	d3d8      	bcc.n	1000421e <hatch_gear_timer_update+0x2a>
 1000426c:	2303      	movs	r3, #3
 1000426e:	7013      	strb	r3, [r2, #0]
@@ -6824,7 +6824,7 @@ Disassembly of section .text:
 10004274:	4906      	ldr	r1, [pc, #24]	@ (10004290 <hatch_gear_timer_update+0x9c>)
 10004276:	680b      	ldr	r3, [r1, #0]
 10004278:	1ac3      	subs	r3, r0, r3
-1000427a:	f5b3 7ffa 	cmp.w	r3, #500	@ 0x1f4
+1000427a:	f5b3 7f2f 	cmp.w	r3, #700	@ 0x2bc
 1000427e:	d3ce      	bcc.n	1000421e <hatch_gear_timer_update+0x2a>
 10004280:	2302      	movs	r3, #2
 10004282:	7013      	strb	r3, [r2, #0]
@@ -6859,26 +6859,26 @@ Disassembly of section .text:
 100042c6:	d836      	bhi.n	10004336 <hatch_gear_controller+0x7a>
 100042c8:	e8df f003 	tbb	[pc, r3]
 100042cc:	021b2430 	.word	0x021b2430
-100042d0:	f44f 63fa 	mov.w	r3, #2000	@ 0x7d0
+100042d0:	f640 030c 	movw	r3, #2060	@ 0x80c
 100042d4:	4619      	mov	r1, r3
 100042d6:	4a1c      	ldr	r2, [pc, #112]	@ (10004348 <hatch_gear_controller+0x8c>)
 100042d8:	4d1c      	ldr	r5, [pc, #112]	@ (1000434c <hatch_gear_controller+0x90>)
 100042da:	4c1d      	ldr	r4, [pc, #116]	@ (10004350 <hatch_gear_controller+0x94>)
 100042dc:	4e1d      	ldr	r6, [pc, #116]	@ (10004354 <hatch_gear_controller+0x98>)
 100042de:	8013      	strh	r3, [r2, #0]
-100042e0:	2022      	movs	r0, #34	@ 0x22
+100042e0:	2017      	movs	r0, #23
 100042e2:	f000 f93d 	bl	10004560 <servo_pwm_write_us>
 100042e6:	8831      	ldrh	r1, [r6, #0]
-100042e8:	2003      	movs	r0, #3
+100042e8:	2001      	movs	r0, #1
 100042ea:	f000 f939 	bl	10004560 <servo_pwm_write_us>
 100042ee:	8829      	ldrh	r1, [r5, #0]
-100042f0:	2024      	movs	r0, #36	@ 0x24
+100042f0:	2018      	movs	r0, #24
 100042f2:	f000 f935 	bl	10004560 <servo_pwm_write_us>
 100042f6:	8821      	ldrh	r1, [r4, #0]
-100042f8:	2004      	movs	r0, #4
+100042f8:	2002      	movs	r0, #2
 100042fa:	e8bd 4070 	ldmia.w	sp!, {r4, r5, r6, lr}
 100042fe:	f000 b92f 	b.w	10004560 <servo_pwm_write_us>
-10004302:	f44f 63fa 	mov.w	r3, #2000	@ 0x7d0
+10004302:	f240 7344 	movw	r3, #1860	@ 0x744
 10004306:	4e13      	ldr	r6, [pc, #76]	@ (10004354 <hatch_gear_controller+0x98>)
 10004308:	4a0f      	ldr	r2, [pc, #60]	@ (10004348 <hatch_gear_controller+0x8c>)
 1000430a:	4d10      	ldr	r5, [pc, #64]	@ (1000434c <hatch_gear_controller+0x90>)
@@ -6886,8 +6886,8 @@ Disassembly of section .text:
 1000430e:	4c10      	ldr	r4, [pc, #64]	@ (10004350 <hatch_gear_controller+0x94>)
 10004310:	8033      	strh	r3, [r6, #0]
 10004312:	e7e5      	b.n	100042e0 <hatch_gear_controller+0x24>
-10004314:	f44f 62fa 	mov.w	r2, #2000	@ 0x7d0
-10004318:	f44f 737a 	mov.w	r3, #1000	@ 0x3e8
+10004314:	f240 4242 	movw	r2, #1090	@ 0x442
+10004318:	f44f 6316 	mov.w	r3, #2400	@ 0x960
 1000431c:	4d0b      	ldr	r5, [pc, #44]	@ (1000434c <hatch_gear_controller+0x90>)
 1000431e:	4c0c      	ldr	r4, [pc, #48]	@ (10004350 <hatch_gear_controller+0x94>)
 10004320:	4909      	ldr	r1, [pc, #36]	@ (10004348 <hatch_gear_controller+0x8c>)
@@ -6896,8 +6896,8 @@ Disassembly of section .text:
 10004326:	802a      	strh	r2, [r5, #0]
 10004328:	8023      	strh	r3, [r4, #0]
 1000432a:	e7d9      	b.n	100042e0 <hatch_gear_controller+0x24>
-1000432c:	f44f 727a 	mov.w	r2, #1000	@ 0x3e8
-10004330:	f44f 63fa 	mov.w	r3, #2000	@ 0x7d0
+1000432c:	f240 721c 	movw	r2, #1820	@ 0x71c
+10004330:	f44f 63e6 	mov.w	r3, #1840	@ 0x730
 10004334:	e7f2      	b.n	1000431c <hatch_gear_controller+0x60>
 10004336:	4b04      	ldr	r3, [pc, #16]	@ (10004348 <hatch_gear_controller+0x8c>)
 10004338:	4d04      	ldr	r5, [pc, #16]	@ (1000434c <hatch_gear_controller+0x90>)
@@ -6914,22 +6914,22 @@ Disassembly of section .text:
 
 10004358 <tail_setup>:
 10004358:	b508      	push	{r3, lr}
-1000435a:	202e      	movs	r0, #46	@ 0x2e
+1000435a:	201d      	movs	r0, #29
 1000435c:	f000 f896 	bl	1000448c <servo_adc_init>
-10004360:	202f      	movs	r0, #47	@ 0x2f
+10004360:	201c      	movs	r0, #28
 10004362:	f000 f893 	bl	1000448c <servo_adc_init>
 10004366:	f240 51c9 	movw	r1, #1481	@ 0x5c9
-1000436a:	2016      	movs	r0, #22
+1000436a:	2003      	movs	r0, #3
 1000436c:	f000 f8bc 	bl	100044e8 <servo_pwm_init_us>
 10004370:	e8bd 4008 	ldmia.w	sp!, {r3, lr}
 10004374:	f240 6177 	movw	r1, #1655	@ 0x677
-10004378:	201c      	movs	r0, #28
+10004378:	2004      	movs	r0, #4
 1000437a:	f000 b8b5 	b.w	100044e8 <servo_pwm_init_us>
 1000437e:	bf00      	nop
 
 10004380 <tail_controller>:
 10004380:	b508      	push	{r3, lr}
-10004382:	2006      	movs	r0, #6
+10004382:	2003      	movs	r0, #3
 10004384:	f000 f896 	bl	100044b4 <servo_adc_read_avg>
 10004388:	f5b0 7f48 	cmp.w	r0, #800	@ 0x320
 1000438c:	bf38      	it	cc
@@ -6967,9 +6967,9 @@ Disassembly of section .text:
 100043ec:	bfb8      	it	lt
 100043ee:	4619      	movlt	r1, r3
 100043f0:	b289      	uxth	r1, r1
-100043f2:	2016      	movs	r0, #22
+100043f2:	2003      	movs	r0, #3
 100043f4:	f000 f8b4 	bl	10004560 <servo_pwm_write_us>
-100043f8:	2007      	movs	r0, #7
+100043f8:	2002      	movs	r0, #2
 100043fa:	f000 f85b 	bl	100044b4 <servo_adc_read_avg>
 100043fe:	f240 4356 	movw	r3, #1110	@ 0x456
 10004402:	4298      	cmp	r0, r3
@@ -7000,13 +7000,13 @@ Disassembly of section .text:
 1000444e:	17d9      	asrs	r1, r3, #31
 10004450:	ebc1 41a2 	rsb	r1, r1, r2, asr #18
 10004454:	f201 6177 	addw	r1, r1, #1655	@ 0x677
-10004458:	201c      	movs	r0, #28
+10004458:	2004      	movs	r0, #4
 1000445a:	e8bd 4008 	ldmia.w	sp!, {r3, lr}
 1000445e:	b289      	uxth	r1, r1
 10004460:	f000 b87e 	b.w	10004560 <servo_pwm_write_us>
 10004464:	f240 6177 	movw	r1, #1655	@ 0x677
 10004468:	e8bd 4008 	ldmia.w	sp!, {r3, lr}
-1000446c:	201c      	movs	r0, #28
+1000446c:	2004      	movs	r0, #4
 1000446e:	f000 b877 	b.w	10004560 <servo_pwm_write_us>
 10004472:	f240 51c9 	movw	r1, #1481	@ 0x5c9
 10004476:	e7bc      	b.n	100043f2 <tail_controller+0x72>
@@ -9061,13 +9061,13 @@ Disassembly of section .data:
 2000121a:	                                         ..
 
 2000121c <r_gear_state>:
-2000121c:	                                         ..
+2000121c:	                                         $.
 
 2000121e <l_hatch_state>:
-2000121e:	                                         ..
+2000121e:	                                         B.
 
 20001220 <r_hatch_state>:
-20001220:	000003e8                                ....
+20001220:	000005dc                                ....
 
 20001224 <print_mutex>:
 	...

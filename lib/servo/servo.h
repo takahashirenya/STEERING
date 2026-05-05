@@ -18,13 +18,14 @@
 
 
 // tail property
-#define LAD_ADC 46
-#define ELE_ADC 47
+#define LAD_ADC 29
+#define ELE_ADC 28
 
-#define LAD_ADC_CHANNEL 6
-#define ELE_ADC_CHANNEL 7
-#define LAD_PWM 22
-#define ELE_PWM 28
+#define LAD_ADC_CHANNEL 3
+#define ELE_ADC_CHANNEL 2
+
+#define LAD_PWM 3
+#define ELE_PWM 4
 
 #define LAD_DEADZONE 100 //ニュートラルの±200の範囲は無視する。
 #define ELE_DEADZONE 300 //ニュートラルの±200の範囲は無視する。
@@ -50,30 +51,30 @@
 
 // hatch and gear property
 
-#define R_HATCH_PWM 34
-#define L_HATCH_PWM 3
+#define R_HATCH_PWM 23
+#define L_HATCH_PWM 1
 
-#define R_GEAR_PWM 36
-#define L_GEAR_PWM 4
+#define R_GEAR_PWM 24
+#define L_GEAR_PWM 2
 
-#define R_HATCH_OPEN 1000
-#define R_HATCH_CLOSE 2000
+#define R_HATCH_OPEN 1500
+#define R_HATCH_CLOSE 2060
 
-#define L_HATCH_OPEN 1000
-#define L_HATCH_CLOSE 2000
+#define L_HATCH_OPEN 2370
+#define L_HATCH_CLOSE 1860
 
-#define R_GEAR_IDLE 1500
-#define R_GEAR_SHORTEN 1000
-#define R_GEAR_STORAGE 2000
+#define R_GEAR_IDLE 2340
+#define R_GEAR_SHORTEN 1820
+#define R_GEAR_STORAGE 1090
 
-#define L_GEAR_IDLE 1500
-#define L_GEAR_SHORTEN 2000
-#define L_GEAR_STORAGE 1000
+#define L_GEAR_IDLE 1240
+#define L_GEAR_SHORTEN 1840
+#define L_GEAR_STORAGE 2400
 
 #define BUTTON_WAIT_TIME_MS 7000U // ボタンが押されてから7秒後にイベント発生
-#define HATCH_GEAR_TIMER_INTERVAL 500U  // 500msごとに次の動作に移る
+#define HATCH_GEAR_TIMER_INTERVAL 700U  // 700msごとに次の動作に移る
 
-#define HATCH_GEAR_BUTTON_GPIO 39
+#define HATCH_GEAR_BUTTON_GPIO 25
 
 
 typedef enum {

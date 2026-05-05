@@ -40,6 +40,7 @@ int main(void)
         // ハッチ・ギア出力反映
         hatch_gear_controller();
 
+
         // 尾翼制御
         tail_controller();
 
