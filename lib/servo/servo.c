@@ -4,6 +4,7 @@
 
 #include "servo.h"
 #include "hardware/adc.h"
+#include "hardware/gpio.h"
 #include "pico/stdlib.h"
 #include "pico/time.h"
 
@@ -287,6 +288,33 @@ void tail_controller(void)
     servo_pwm_write_us(ELE_PWM, ele_pwm_value);
 }
 
+void tail_controller_with_lad_adc(uint16_t lad_adc_value)
+{
+    uint16_t lad_pwm_value = adc_to_pwm(lad_adc_value, LAD_ADC_NUTRAL, LAD_ADC_MIN, LAD_ADC_MAX, LAD_DEADZONE, LAD_NUTRAL, LAD_MIN, LAD_MAX, LAD_REVERSAL_FLAG);
+    servo_pwm_write_us(LAD_PWM, lad_pwm_value);
+
+    uint16_t ele_adc_value = servo_adc_read_avg(ELE_ADC_CHANNEL);
+    uint16_t ele_pwm_value = adc_to_pwm(ele_adc_value, ELE_ADC_NUTRAL, ELE_ADC_MIN, ELE_ADC_MAX, ELE_DEADZONE, ELE_NUTRAL, ELE_MIN, ELE_MAX, ELE_REVERSAL_FLAG);
+    servo_pwm_write_us(ELE_PWM, ele_pwm_value);
+}
+
+void tail_controller_with_adc_values(uint16_t lad_adc_value, bool use_lad_adc, uint16_t ele_adc_value, bool use_ele_adc)
+{
+    if (!use_lad_adc) {
+        lad_adc_value = servo_adc_read_avg(LAD_ADC_CHANNEL);
+    }
+
+    if (!use_ele_adc) {
+        ele_adc_value = servo_adc_read_avg(ELE_ADC_CHANNEL);
+    }
+
+    uint16_t lad_pwm_value = adc_to_pwm(lad_adc_value, LAD_ADC_NUTRAL, LAD_ADC_MIN, LAD_ADC_MAX, LAD_DEADZONE, LAD_NUTRAL, LAD_MIN, LAD_MAX, LAD_REVERSAL_FLAG);
+    servo_pwm_write_us(LAD_PWM, lad_pwm_value);
+
+    uint16_t ele_pwm_value = adc_to_pwm(ele_adc_value, ELE_ADC_NUTRAL, ELE_ADC_MIN, ELE_ADC_MAX, ELE_DEADZONE, ELE_NUTRAL, ELE_MIN, ELE_MAX, ELE_REVERSAL_FLAG);
+    servo_pwm_write_us(ELE_PWM, ele_pwm_value);
+}
+
 
 uint16_t adc_to_pwm(
     uint16_t adc_value,
@@ -318,7 +346,13 @@ uint16_t adc_to_pwm(
 
     // --- 正方向 ---
     if (adc_offset > 0) {
-        int16_t adc_range = (int16_t)adc_max - (int16_t)adc_neutral;
+        int16_t adc_range;
+
+        if (reversal_flag) {
+            adc_range = (int16_t)adc_neutral - (int16_t)adc_min;
+        } else {
+            adc_range = (int16_t)adc_max - (int16_t)adc_neutral;
+        }
 
         if (adc_range > 0) {
             int16_t pwm_range = (int16_t)pwm_max - (int16_t)pwm_neutral;
@@ -331,7 +365,13 @@ uint16_t adc_to_pwm(
     }
     // --- 負方向 ---
     else {
-        int16_t adc_range = (int16_t)adc_min - (int16_t)adc_neutral;
+        int16_t adc_range;
+
+        if (reversal_flag) {
+            adc_range = -((int16_t)adc_max - (int16_t)adc_neutral);
+        } else {
+            adc_range = (int16_t)adc_min - (int16_t)adc_neutral;
+        }
 
         if (adc_range < 0) {
             int16_t pwm_range = (int16_t)pwm_min - (int16_t)pwm_neutral;

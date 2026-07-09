@@ -213,3 +213,6 @@ C:/Users/renya/pico_sdk_code/STEERING/build/pico-sdk/docs/CMakeFiles/rebuild_cac
 C:/Users/renya/pico_sdk_code/STEERING/build/lib/servo/CMakeFiles/servo.dir
 C:/Users/renya/pico_sdk_code/STEERING/build/lib/servo/CMakeFiles/edit_cache.dir
 C:/Users/renya/pico_sdk_code/STEERING/build/lib/servo/CMakeFiles/rebuild_cache.dir
+C:/Users/renya/pico_sdk_code/STEERING/build/lib/can/CMakeFiles/can.dir
+C:/Users/renya/pico_sdk_code/STEERING/build/lib/can/CMakeFiles/edit_cache.dir
+C:/Users/renya/pico_sdk_code/STEERING/build/lib/can/CMakeFiles/rebuild_cache.dir

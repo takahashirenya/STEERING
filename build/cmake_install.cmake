@@ -41,6 +41,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("C:/Users/renya/pico_sdk_code/STEERING/build/pico-sdk/cmake_install.cmake")
   include("C:/Users/renya/pico_sdk_code/STEERING/build/lib/servo/cmake_install.cmake")
+  include("C:/Users/renya/pico_sdk_code/STEERING/build/lib/can/cmake_install.cmake")
 
 endif()
 

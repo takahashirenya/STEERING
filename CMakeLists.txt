@@ -38,6 +38,7 @@ pico_sdk_init()
 add_executable(STEERING STEERING.c )
 
 add_subdirectory(lib/servo)
+add_subdirectory(lib/can)
 
 pico_set_program_name(STEERING "STEERING")
 pico_set_program_version(STEERING "0.1")
@@ -51,7 +52,8 @@ target_link_libraries(STEERING
         pico_stdlib
         hardware_pwm
         hardware_adc
-        servo)
+        servo
+        can)
 
 # Add the standard include files to the build
 target_include_directories(STEERING PRIVATE

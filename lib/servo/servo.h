@@ -6,7 +6,7 @@
 //set dig property
 
 #define SET_DIG_PWM 32
-#define SET_DIG_NUTRAL 1500
+#define SET_DIG_NUTRAL 2340
 #define SLOW_STEP 1
 #define FAST_STEP 10
 
@@ -24,15 +24,15 @@
 #define LAD_ADC_CHANNEL 3
 #define ELE_ADC_CHANNEL 2
 
-#define LAD_PWM 3
-#define ELE_PWM 4
+#define LAD_PWM 4
+#define ELE_PWM 5
 
 #define LAD_DEADZONE 100 //ニュートラルの±200の範囲は無視する。
 #define ELE_DEADZONE 300 //ニュートラルの±200の範囲は無視する。
 
-#define ELE_ADC_MAX 3600
-#define ELE_ADC_NUTRAL 2450
-#define ELE_ADC_MIN 1110
+#define ELE_ADC_MAX 3900
+#define ELE_ADC_NUTRAL 2700
+#define ELE_ADC_MIN 1500
 
 #define LAD_ADC_MAX 3300
 #define LAD_ADC_NUTRAL 2040
@@ -41,7 +41,7 @@
 #define ELE_REVERSAL_FLAG false
 #define ELE_MAX 2129
 #define ELE_NUTRAL 1655
-#define ELE_MIN 1000
+#define ELE_MIN 1135
 
 #define LAD_REVERSAL_FLAG true
 #define LAD_MAX 1834
@@ -55,21 +55,21 @@
 #define L_HATCH_PWM 1
 
 #define R_GEAR_PWM 24
-#define L_GEAR_PWM 2
+#define L_GEAR_PWM 6
 
 #define R_HATCH_OPEN 1500
-#define R_HATCH_CLOSE 2060
+#define R_HATCH_CLOSE 2020
 
 #define L_HATCH_OPEN 2370
 #define L_HATCH_CLOSE 1860
 
 #define R_GEAR_IDLE 2340
-#define R_GEAR_SHORTEN 1820
-#define R_GEAR_STORAGE 1090
+#define R_GEAR_SHORTEN 1720
+#define R_GEAR_STORAGE 1120
 
 #define L_GEAR_IDLE 1240
-#define L_GEAR_SHORTEN 1840
-#define L_GEAR_STORAGE 2400
+#define L_GEAR_SHORTEN 1870
+#define L_GEAR_STORAGE 2410
 
 #define BUTTON_WAIT_TIME_MS 7000U // ボタンが押されてから7秒後にイベント発生
 #define HATCH_GEAR_TIMER_INTERVAL 700U  // 700msごとに次の動作に移る
@@ -112,6 +112,8 @@ extern "C" // for C++ compilers
 
     // main control functions 
     void tail_controller(void);
+    void tail_controller_with_lad_adc(uint16_t lad_adc_value);
+    void tail_controller_with_adc_values(uint16_t lad_adc_value, bool use_lad_adc, uint16_t ele_adc_value, bool use_ele_adc);
     void hatch_gear_timer_update(void);
     void hatch_gear_controller(void);
 
