@@ -27,7 +27,7 @@
 #define LAD_PWM 4
 #define ELE_PWM 5
 
-#define LAD_DEADZONE 100 //ニュートラルの±200の範囲は無視する。
+#define LAD_DEADZONE 600 //ニュートラルの±200の範囲は無視する。
 #define ELE_DEADZONE 300 //ニュートラルの±200の範囲は無視する。
 
 #define ELE_ADC_MAX 3900
@@ -44,9 +44,9 @@
 #define ELE_MIN 1135
 
 #define LAD_REVERSAL_FLAG true
-#define LAD_MAX 1834
-#define LAD_NUTRAL 1481
-#define LAD_MIN 1148
+#define LAD_MAX 1860
+#define LAD_NUTRAL 1504
+#define LAD_MIN 1168
 
 
 // hatch and gear property
@@ -55,7 +55,7 @@
 #define L_HATCH_PWM 1
 
 #define R_GEAR_PWM 24
-#define L_GEAR_PWM 6
+#define L_GEAR_PWM 2
 
 #define R_HATCH_OPEN 1500
 #define R_HATCH_CLOSE 2020
@@ -93,6 +93,11 @@ typedef enum {
     HATCH_GEAR_TIMER_FINISH
 } hatch_gear_t;
 
+typedef struct {
+    uint16_t lad;
+    uint16_t ele;
+} tail_pwm_values_t;
+
 #ifdef __cplusplus
 extern "C" // for C++ compilers
 {
@@ -113,7 +118,7 @@ extern "C" // for C++ compilers
     // main control functions 
     void tail_controller(void);
     void tail_controller_with_lad_adc(uint16_t lad_adc_value);
-    void tail_controller_with_adc_values(uint16_t lad_adc_value, bool use_lad_adc, uint16_t ele_adc_value, bool use_ele_adc);
+    tail_pwm_values_t tail_controller_with_adc_values(uint16_t lad_adc_value, bool use_lad_adc, uint16_t ele_adc_value, bool use_ele_adc);
     void hatch_gear_timer_update(void);
     void hatch_gear_controller(void);
 

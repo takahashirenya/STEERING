@@ -50,6 +50,7 @@ pico_enable_stdio_usb(STEERING 1)
 # Add the standard library to the build
 target_link_libraries(STEERING
         pico_stdlib
+        hardware_uart
         hardware_pwm
         hardware_adc
         servo
