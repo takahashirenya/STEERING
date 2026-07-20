@@ -102,4 +102,6 @@ Thumbs.db
 # ===== User-specific config =====
 
 *.user
+.codex/
+.codex_csv_analysis/
 
