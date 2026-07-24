@@ -115,6 +115,11 @@ void hatch_gear_timer_init(void)
     hatch_gear_start_time = 0;
 }
 
+hatch_gear_t hatch_gear_state_get(void)
+{
+    return g_hatch_gear_timer;
+}
+
 void hatch_gear_pwm_init(void)
 {
     servo_pwm_init_us(R_HATCH_PWM, R_HATCH_OPEN);

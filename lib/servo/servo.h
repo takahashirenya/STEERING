@@ -121,6 +121,7 @@ extern "C" // for C++ compilers
     tail_pwm_values_t tail_controller_with_adc_values(uint16_t lad_adc_value, bool use_lad_adc, uint16_t ele_adc_value, bool use_ele_adc);
     void hatch_gear_timer_update(void);
     void hatch_gear_controller(void);
+    hatch_gear_t hatch_gear_state_get(void);
 
 
     // utility functions

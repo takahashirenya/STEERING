@@ -37,8 +37,8 @@
 #define SPEED_DATA_SIZE    ((uint8_t)sizeof(float))
 #define PWM_FRAME_HEADER_1 0xA5U
 #define PWM_FRAME_HEADER_2 0x5AU
-#define PWM_DATA_SIZE      4U
-#define PWM_FRAME_SIZE     8U
+#define PWM_DATA_SIZE      5U
+#define PWM_FRAME_SIZE     9U
 
 
 // CAN受信データ保存用
@@ -186,12 +186,14 @@ static void logger_uart_to_can_process(mcp2515_t *can)
     }
 }
 
-static void send_pwm_to_logger(uint16_t lad_pwm_us, uint16_t ele_pwm_us)
+static void send_pwm_to_logger(uint16_t lad_pwm_us, uint16_t ele_pwm_us,
+                               hatch_gear_t hatch_gear)
 {
     uint8_t frame[PWM_FRAME_SIZE] = {
         PWM_FRAME_HEADER_1, PWM_FRAME_HEADER_2, PWM_DATA_SIZE,
         (uint8_t)(lad_pwm_us & 0xFFU), (uint8_t)(lad_pwm_us >> 8),
         (uint8_t)(ele_pwm_us & 0xFFU), (uint8_t)(ele_pwm_us >> 8),
+        (uint8_t)hatch_gear,
         0U,
     };
     for (uint8_t i = 0; i < PWM_FRAME_SIZE - 1; i++) {
@@ -279,7 +281,7 @@ int main(void)
         uint16_t ele_adc_value = use_ele_adc ? can_data_to_u16(can_ele_data) : 0;
         tail_pwm_values_t tail_pwm = tail_controller_with_adc_values(lad_adc_value, use_lad_adc, ele_adc_value, use_ele_adc);
         if (now - last_pwm_tx_ms >= 20U) {
-            send_pwm_to_logger(tail_pwm.lad, tail_pwm.ele);
+            send_pwm_to_logger(tail_pwm.lad, tail_pwm.ele, hatch_gear_state_get());
             last_pwm_tx_ms = now;
         }
         printf("lad_pwm: %u, ele_pwm: %u\n", tail_pwm.lad, tail_pwm.ele);
