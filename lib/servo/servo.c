@@ -4,6 +4,7 @@
 
 #include "servo.h"
 #include "hardware/adc.h"
+#include "hardware/gpio.h"
 #include "pico/stdlib.h"
 #include "pico/time.h"
 
@@ -112,6 +113,11 @@ void hatch_gear_timer_init(void)
 {
     g_hatch_gear_timer = HATCH_GEAR_TIMER_IDLE;
     hatch_gear_start_time = 0;
+}
+
+hatch_gear_t hatch_gear_state_get(void)
+{
+    return g_hatch_gear_timer;
 }
 
 void hatch_gear_pwm_init(void)
@@ -287,6 +293,39 @@ void tail_controller(void)
     servo_pwm_write_us(ELE_PWM, ele_pwm_value);
 }
 
+void tail_controller_with_lad_adc(uint16_t lad_adc_value)
+{
+    uint16_t lad_pwm_value = adc_to_pwm(lad_adc_value, LAD_ADC_NUTRAL, LAD_ADC_MIN, LAD_ADC_MAX, LAD_DEADZONE, LAD_NUTRAL, LAD_MIN, LAD_MAX, LAD_REVERSAL_FLAG);
+    servo_pwm_write_us(LAD_PWM, lad_pwm_value);
+
+    uint16_t ele_adc_value = servo_adc_read_avg(ELE_ADC_CHANNEL);
+    uint16_t ele_pwm_value = adc_to_pwm(ele_adc_value, ELE_ADC_NUTRAL, ELE_ADC_MIN, ELE_ADC_MAX, ELE_DEADZONE, ELE_NUTRAL, ELE_MIN, ELE_MAX, ELE_REVERSAL_FLAG);
+    servo_pwm_write_us(ELE_PWM, ele_pwm_value);
+}
+
+tail_pwm_values_t tail_controller_with_adc_values(uint16_t lad_adc_value, bool use_lad_adc, uint16_t ele_adc_value, bool use_ele_adc)
+{
+    if (!use_lad_adc) {
+        lad_adc_value = servo_adc_read_avg(LAD_ADC_CHANNEL);
+    }
+
+    if (!use_ele_adc) {
+        ele_adc_value = servo_adc_read_avg(ELE_ADC_CHANNEL);
+    }
+
+    uint16_t lad_pwm_value = adc_to_pwm(lad_adc_value, LAD_ADC_NUTRAL, LAD_ADC_MIN, LAD_ADC_MAX, LAD_DEADZONE, LAD_NUTRAL, LAD_MIN, LAD_MAX, LAD_REVERSAL_FLAG);
+    servo_pwm_write_us(LAD_PWM, lad_pwm_value);
+
+    uint16_t ele_pwm_value = adc_to_pwm(ele_adc_value, ELE_ADC_NUTRAL, ELE_ADC_MIN, ELE_ADC_MAX, ELE_DEADZONE, ELE_NUTRAL, ELE_MIN, ELE_MAX, ELE_REVERSAL_FLAG);
+    servo_pwm_write_us(ELE_PWM, ele_pwm_value);
+
+    tail_pwm_values_t pwm_values = {
+        .lad = lad_pwm_value,
+        .ele = ele_pwm_value,
+    };
+    return pwm_values;
+}
+
 
 uint16_t adc_to_pwm(
     uint16_t adc_value,
@@ -310,7 +349,9 @@ uint16_t adc_to_pwm(
     }
 
     // --- デッドゾーン ---
-    if (adc_offset > -(int32_t)deadzone && adc_offset < (int32_t)deadzone) {
+    // Do not include the deadzone itself in the response curve. This keeps
+    // PWM continuous when a slightly loaded control crosses the boundary.
+    if (adc_offset >= -(int32_t)deadzone && adc_offset <= (int32_t)deadzone) {
         return pwm_neutral;
     }
 
@@ -318,26 +359,46 @@ uint16_t adc_to_pwm(
 
     // --- 正方向 ---
     if (adc_offset > 0) {
-        int16_t adc_range = (int16_t)adc_max - (int16_t)adc_neutral;
+        int16_t adc_range;
 
-        if (adc_range > 0) {
+        if (reversal_flag) {
+            adc_range = (int16_t)adc_neutral - (int16_t)adc_min;
+        } else {
+            adc_range = (int16_t)adc_max - (int16_t)adc_neutral;
+        }
+
+        int32_t active_offset = adc_offset - (int32_t)deadzone;
+        int32_t active_range = (int32_t)adc_range - (int32_t)deadzone;
+
+        if (active_range > 0) {
             int16_t pwm_range = (int16_t)pwm_max - (int16_t)pwm_neutral;
 
             pwm_value = pwm_neutral +
-                        (adc_offset * adc_offset * pwm_range) / (adc_range * adc_range); // 二次関数的に変換
+                        (active_offset * active_offset * pwm_range) /
+                        (active_range * active_range); // 二次関数的に変換
         } else {
             pwm_value = pwm_neutral;  // 安全フォールバック
         }
     }
     // --- 負方向 ---
     else {
-        int16_t adc_range = (int16_t)adc_min - (int16_t)adc_neutral;
+        int16_t adc_range;
 
-        if (adc_range < 0) {
+        if (reversal_flag) {
+            adc_range = -((int16_t)adc_max - (int16_t)adc_neutral);
+        } else {
+            adc_range = (int16_t)adc_min - (int16_t)adc_neutral;
+        }
+
+        int32_t active_offset = adc_offset + (int32_t)deadzone;
+        int32_t active_range = (int32_t)adc_range + (int32_t)deadzone;
+
+        if (active_range < 0) {
             int16_t pwm_range = (int16_t)pwm_min - (int16_t)pwm_neutral;
 
             pwm_value = pwm_neutral +
-                        (adc_offset * adc_offset * pwm_range) / (adc_range * adc_range); // 二次関数的に変換
+                        (active_offset * active_offset * pwm_range) /
+                        (active_range * active_range); // 二次関数的に変換
         } else {
             pwm_value = pwm_neutral; 
         }

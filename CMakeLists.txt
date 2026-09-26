@@ -23,7 +23,7 @@ if (EXISTS ${picoVscode})
     include(${picoVscode})
 endif()
 # ====================================================================================
-set(PICO_BOARD weact_studio_rp2350b_core CACHE STRING "Board type")
+set(PICO_BOARD pico2 CACHE STRING "Board type")
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)
@@ -38,6 +38,7 @@ pico_sdk_init()
 add_executable(STEERING STEERING.c )
 
 add_subdirectory(lib/servo)
+add_subdirectory(lib/can)
 
 pico_set_program_name(STEERING "STEERING")
 pico_set_program_version(STEERING "0.1")
@@ -49,9 +50,11 @@ pico_enable_stdio_usb(STEERING 1)
 # Add the standard library to the build
 target_link_libraries(STEERING
         pico_stdlib
+        hardware_uart
         hardware_pwm
         hardware_adc
-        servo)
+        servo
+        can)
 
 # Add the standard include files to the build
 target_include_directories(STEERING PRIVATE

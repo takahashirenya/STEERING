@@ -6,7 +6,7 @@
 //set dig property
 
 #define SET_DIG_PWM 32
-#define SET_DIG_NUTRAL 1500
+#define SET_DIG_NUTRAL 2340
 #define SLOW_STEP 1
 #define FAST_STEP 10
 
@@ -18,20 +18,21 @@
 
 
 // tail property
-#define LAD_ADC 46
-#define ELE_ADC 47
+#define LAD_ADC 29
+#define ELE_ADC 28
 
-#define LAD_ADC_CHANNEL 6
-#define ELE_ADC_CHANNEL 7
-#define LAD_PWM 22
-#define ELE_PWM 28
+#define LAD_ADC_CHANNEL 3
+#define ELE_ADC_CHANNEL 2
 
-#define LAD_DEADZONE 100 //ニュートラルの±200の範囲は無視する。
+#define LAD_PWM 4
+#define ELE_PWM 5
+
+#define LAD_DEADZONE 600 //ニュートラルの±200の範囲は無視する。
 #define ELE_DEADZONE 300 //ニュートラルの±200の範囲は無視する。
 
-#define ELE_ADC_MAX 3600
-#define ELE_ADC_NUTRAL 2450
-#define ELE_ADC_MIN 1110
+#define ELE_ADC_MAX 3900
+#define ELE_ADC_NUTRAL 2700
+#define ELE_ADC_MIN 1500
 
 #define LAD_ADC_MAX 3300
 #define LAD_ADC_NUTRAL 2040
@@ -40,40 +41,40 @@
 #define ELE_REVERSAL_FLAG false
 #define ELE_MAX 2129
 #define ELE_NUTRAL 1655
-#define ELE_MIN 1000
+#define ELE_MIN 1135
 
 #define LAD_REVERSAL_FLAG true
-#define LAD_MAX 1834
-#define LAD_NUTRAL 1481
-#define LAD_MIN 1148
+#define LAD_MAX 1860
+#define LAD_NUTRAL 1504
+#define LAD_MIN 1168
 
 
 // hatch and gear property
 
-#define R_HATCH_PWM 34
-#define L_HATCH_PWM 3
+#define R_HATCH_PWM 23
+#define L_HATCH_PWM 1
 
-#define R_GEAR_PWM 36
-#define L_GEAR_PWM 4
+#define R_GEAR_PWM 24
+#define L_GEAR_PWM 2
 
-#define R_HATCH_OPEN 1000
-#define R_HATCH_CLOSE 2000
+#define R_HATCH_OPEN 1500
+#define R_HATCH_CLOSE 2020
 
-#define L_HATCH_OPEN 1000
-#define L_HATCH_CLOSE 2000
+#define L_HATCH_OPEN 2370
+#define L_HATCH_CLOSE 1860
 
-#define R_GEAR_IDLE 1500
-#define R_GEAR_SHORTEN 1000
-#define R_GEAR_STORAGE 2000
+#define R_GEAR_IDLE 2340
+#define R_GEAR_SHORTEN 1720
+#define R_GEAR_STORAGE 1120
 
-#define L_GEAR_IDLE 1500
-#define L_GEAR_SHORTEN 2000
-#define L_GEAR_STORAGE 1000
+#define L_GEAR_IDLE 1240
+#define L_GEAR_SHORTEN 1870
+#define L_GEAR_STORAGE 2410
 
 #define BUTTON_WAIT_TIME_MS 7000U // ボタンが押されてから7秒後にイベント発生
-#define HATCH_GEAR_TIMER_INTERVAL 500U  // 500msごとに次の動作に移る
+#define HATCH_GEAR_TIMER_INTERVAL 700U  // 700msごとに次の動作に移る
 
-#define HATCH_GEAR_BUTTON_GPIO 39
+#define HATCH_GEAR_BUTTON_GPIO 25
 
 
 typedef enum {
@@ -91,6 +92,11 @@ typedef enum {
     HATCH_GEAR_TIMER_R_HATCH,
     HATCH_GEAR_TIMER_FINISH
 } hatch_gear_t;
+
+typedef struct {
+    uint16_t lad;
+    uint16_t ele;
+} tail_pwm_values_t;
 
 #ifdef __cplusplus
 extern "C" // for C++ compilers
@@ -111,8 +117,11 @@ extern "C" // for C++ compilers
 
     // main control functions 
     void tail_controller(void);
+    void tail_controller_with_lad_adc(uint16_t lad_adc_value);
+    tail_pwm_values_t tail_controller_with_adc_values(uint16_t lad_adc_value, bool use_lad_adc, uint16_t ele_adc_value, bool use_ele_adc);
     void hatch_gear_timer_update(void);
     void hatch_gear_controller(void);
+    hatch_gear_t hatch_gear_state_get(void);
 
 
     // utility functions
